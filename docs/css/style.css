@@ -183,6 +183,15 @@ footer {
     color: #888;
 }
 
+/* Canvas Responsive */
+#gameCanvas {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    background: #000;
+}
+
 @media (max-width: 1024px) {
     .main-content {
         grid-template-columns: 1fr;
@@ -202,6 +211,15 @@ footer {
     button {
         padding: 10px 20px;
         font-size: 0.9em;
+    }
+
+    .controls-info {
+        font-size: 0.9em !important;
+        padding: 15px !important;
+    }
+
+    .controls-info p {
+        margin: 5px 0 !important;
     }
 }
 
