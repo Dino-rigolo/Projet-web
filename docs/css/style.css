@@ -12,9 +12,10 @@ body {
 }
 
 .container {
-    max-width: 1000px;
+    max-width: 100%;
     margin: 0 auto;
     padding: 15px;
+    width: 100%;
 }
 
 header {
@@ -65,18 +66,27 @@ header p {
 #webcam {
     width: 100%;
     border-radius: 8px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     display: none; /* Masquer la vidéo brute */
     background: #000;
+    max-height: 500px;
+    object-fit: contain;
 }
 
 #canvas {
     width: 100%;
     border-radius: 8px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     display: block;
     background: #000;
     position: relative;
+    max-height: 500px;
+}
+
+#video {
+    width: 100%;
+    max-height: 500px;
+    object-fit: contain;
 }
 
 #game-canvas {
@@ -194,18 +204,12 @@ footer {
     border-radius: 8px;
     background: #000;
     aspect-ratio: 1;
-}
-
-@media (max-width: 1024px) {
-    .main-content {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
+    max-height: 500px;
 }
 
 @media (max-width: 768px) {
     header h1 {
-        font-size: 1.8em;
+        font-size: 1.6em;
     }
 
     .game-info {
@@ -214,17 +218,17 @@ footer {
     }
 
     button {
-        padding: 10px 20px;
-        font-size: 0.9em;
+        padding: 8px 15px;
+        font-size: 0.85em;
     }
 
     .controls-info {
-        font-size: 0.9em !important;
-        padding: 15px !important;
+        font-size: 0.85em !important;
+        padding: 12px !important;
     }
 
     .controls-info p {
-        margin: 5px 0 !important;
+        margin: 4px 0 !important;
     }
 }
 
