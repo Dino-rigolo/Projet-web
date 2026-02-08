@@ -46,6 +46,7 @@ header p {
 
 .detection-section,
 .game-section {
+    width:30vw;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 10px;
     padding: 15px;
