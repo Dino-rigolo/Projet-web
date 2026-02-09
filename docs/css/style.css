@@ -76,6 +76,20 @@ header p {
     position: relative;
 }
 
+#canvas {
+    transform: scaleX(-1);
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    cursor: none;
+}
+
+#video {
+    position: relative;
+    z-index: 1;
+}
+
 #webcam {
     width: 100%;
     border-radius: 8px;

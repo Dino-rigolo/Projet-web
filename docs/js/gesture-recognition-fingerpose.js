@@ -129,13 +129,36 @@ class GestureRecognizerFingerpose {
 
     startDetectionLoop(video, canvas) {
         const ctx = canvas.getContext('2d');
+        let frameCount = 0;
+        
         const processFrame = async () => {
             if (!this.isRunning || !this.detector) return;
 
             try {
+                // Redimensionner le canvas si nécessaire
+                if (video.videoWidth > 0 && video.videoHeight > 0) {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                }
+
                 const predictions = await this.detector.estimateHands(video, {
                     flipHorizontal: true
                 });
+
+                // Effacer le canvas et redessiner la vidéo
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                // Debug: afficher les predictions
+                if (frameCount % 30 === 0) {
+                    console.log('🎥 Predictions:', predictions.length, 'mains détectées');
+                }
+
+                // Dessiner le squelette pour chaque main détectée
+                for (const hand of predictions) {
+                    this.drawHandSkeleton(ctx, hand);
+                }
+
+                frameCount++;
 
                 // Traiter les gestes
                 const perHand = predictions.map(hand => {
@@ -192,6 +215,73 @@ class GestureRecognizerFingerpose {
         };
 
         processFrame();
+    }
+
+    drawHandSkeleton(ctx, hand) {
+        const keypoints = hand.keypoints;
+        
+        if (!keypoints || keypoints.length === 0) {
+            console.log('❌ Pas de keypoints');
+            return;
+        }
+
+        console.log('✓ Dessin du squelette avec', keypoints.length, 'points');
+
+        // Connexions des doigts selon le modèle MediaPipe
+        const connections = [
+            // Poignet au pouce
+            [0, 1], [1, 2], [2, 3], [3, 4],
+            // Poignet à l'index
+            [0, 5], [5, 6], [6, 7], [7, 8],
+            // Poignet au majeur
+            [0, 9], [9, 10], [10, 11], [11, 12],
+            // Poignet à l'annulaire
+            [0, 13], [13, 14], [14, 15], [15, 16],
+            // Poignet au petit doigt
+            [0, 17], [17, 18], [18, 19], [19, 20]
+        ];
+   
+        // Dessiner les connexions
+        ctx.strokeStyle = '#00d4ff';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        for (const [start, end] of connections) {
+            const pt1 = keypoints[start];
+            const pt2 = keypoints[end];
+
+            if (pt1 && pt2 && pt1.x && pt1.y && pt2.x && pt2.y) {
+            
+                const x1 = ctx.canvas.width - pt1.x;
+                const x2 = ctx.canvas.width - pt2.x;
+                
+                ctx.beginPath();
+                ctx.moveTo(x1, pt1.y);
+                ctx.lineTo(x2, pt2.y);
+                ctx.stroke();
+            }
+        }
+
+        // Dessiner les points 
+        ctx.fillStyle = '#0099cc';
+        ctx.strokeStyle = '#0099cc';
+        ctx.lineWidth = 1;
+
+        for (let i = 0; i < keypoints.length; i++) {
+            const keypoint = keypoints[i];
+            if (keypoint && keypoint.x && keypoint.y) {
+                // Inverser l'axe x pour correspondre à la vidéo non-mirroir
+                const x = ctx.canvas.width - keypoint.x;
+                
+                ctx.beginPath();
+                ctx.arc(x, keypoint.y, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            }
+        }
+
+        console.log('✓ Squelette dessiné');
     }
 
     updateDisplay(gesture, score) {
