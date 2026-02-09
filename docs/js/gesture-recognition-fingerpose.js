@@ -148,10 +148,7 @@ class GestureRecognizerFingerpose {
                 // Effacer le canvas et redessiner la vidéo
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-                // Debug: afficher les predictions
-                if (frameCount % 30 === 0) {
-                    console.log('🎥 Predictions:', predictions.length, 'mains détectées');
-                }
+
 
                 // Dessiner le squelette pour chaque main détectée
                 for (const hand of predictions) {
@@ -208,7 +205,7 @@ class GestureRecognizerFingerpose {
                 }
 
             } catch (error) {
-                console.log('Erreur processus détection:', error);
+                
             }
 
             this.rafId = requestAnimationFrame(processFrame);
@@ -221,11 +218,8 @@ class GestureRecognizerFingerpose {
         const keypoints = hand.keypoints;
         
         if (!keypoints || keypoints.length === 0) {
-            console.log('❌ Pas de keypoints');
             return;
         }
-
-        console.log('✓ Dessin du squelette avec', keypoints.length, 'points');
 
         // Connexions des doigts selon le modèle MediaPipe
         const connections = [
@@ -280,8 +274,6 @@ class GestureRecognizerFingerpose {
                 ctx.stroke();
             }
         }
-
-        console.log('✓ Squelette dessiné');
     }
 
     updateDisplay(gesture, score) {
