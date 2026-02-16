@@ -1,9 +1,3 @@
-// filepath: exercice2_demonstrateur_IA/js/main.js
-/**
- * main.js
- * Script principal pour orchestrer l'application
- */
-
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('✓ Application démarrée');
 
@@ -14,14 +8,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Initialiser le jeu
         const gameInitialized = game.initialize('gameCanvas');
         if (!gameInitialized) {
-            console.error('❌ Impossible d\'initialiser le jeu');
+            console.error('Impossible d\'initialiser le jeu');
             return;
         }
 
         // Initialiser la détection de gestes
         const gesturesInitialized = await gestureRecognizer.initialize();
         if (!gesturesInitialized) {
-            console.error('⚠ Détection de gestes non disponible');
+            console.error('Détection de gestes non disponible');
         }
 
         // Écouter les gestes et les transmettre au jeu
@@ -41,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 console.log('🎮 Démarrage du jeu');
                 game.start();
                 startBtn.disabled = true;
-                pauseBtn.disabled = false;  // ✅ Activer PAUSE seulement au démarrage
+                pauseBtn.disabled = false;  
                 stopBtn.disabled = false;
                 pauseBtn.textContent = '⏸ Pause';
             });
@@ -50,11 +44,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (pauseBtn) {
             pauseBtn.addEventListener('click', () => {
                 if (game.isPaused) {
-                    console.log('▶️ Reprise du jeu');
+                    console.log('Reprise du jeu');
                     game.resume();
                     pauseBtn.textContent = '⏸ Pause';
                 } else {
-                    console.log('⏸ Mise en pause du jeu');
+                    console.log('Mise en pause du jeu');
                     game.pause();
                     pauseBtn.textContent = '▶ Reprendre';
                 }
@@ -63,7 +57,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (stopBtn) {
             stopBtn.addEventListener('click', () => {
-                console.log('⏹ Arrêt du jeu');
+                console.log('Arrêt du jeu');
                 
                 const lastScoreEl = document.getElementById('lastScore');
                 if (lastScoreEl) {
@@ -99,9 +93,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             lastScoreEl.textContent = localStorage.getItem('lastScore') || '0';
         }
 
-        console.log('✓ Application prête');
+        console.log('Application prête');
     } catch (error) {
-        console.error('❌ Erreur lors de l\'initialisation:', error);
+        console.error('Erreur lors de l\'initialisation:', error);
     }
 });
 

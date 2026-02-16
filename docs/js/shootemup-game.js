@@ -1,7 +1,4 @@
-/**
- * shootemup-game.js
- * Gestion du jeu Shoot'em Up avec contrôle par gestes
- */
+//Gestion du jeu 
 
 class ShootemupGame {
     constructor() {
@@ -22,7 +19,7 @@ class ShootemupGame {
         this.fireRate = 200;
         this.canvas = null;
         this.ctx = null;
-        this.lastDifficultyLevel = 0;  // Pour tracker les changements de niveau
+        this.lastDifficultyLevel = 0; 
 
         // Constantes du bouclier
         this.SHIELD_DURATION = 3000;
@@ -51,9 +48,9 @@ class ShootemupGame {
         this.lives = 3;
         this.bullets = [];
         this.enemies = [];
-        this.missiles = [];  // ← Reset missiles
+        this.missiles = []; 
         
-        // Initialiser la position du vaisseau (bas de l'écran, centré)
+        // la position du vaisseau 
         this.playerX = this.canvas.width / 2 - 25;
         this.playerY = this.canvas.height - 100;
         
@@ -81,7 +78,7 @@ class ShootemupGame {
     resume() {
         if (this.isRunning && this.isPaused) {
             this.isPaused = false;
-            resourceManager.continueSoundtrack();  // ← Continue sans remettre à zéro
+            resourceManager.continueSoundtrack();  
             this.gameLoop();
         }
     }
@@ -105,9 +102,9 @@ class ShootemupGame {
         const now = Date.now();
         if (now - this.lastFireTime > this.fireRate) {
             this.bullets.push({
-                x: this.playerX + 22.5,  // Centré sur le vaisseau
+                x: this.playerX + 22.5, 
                 y: this.playerY,
-                width: 5,  // Réduit pour tirs plus fins
+                width: 5,  
                 height: 15,
                 speed: 7
             });
@@ -134,9 +131,9 @@ class ShootemupGame {
         // À partir de 150 points, la difficulté augmente tous les 50 points
         if (this.score < 150) {
             return {
-                greenEnemyProba: 0,      // Pas d'ennemis verts
+                greenEnemyProba: 0,    
                 redEnemySpeed: 2,
-                greenEnemySpeed: 0.8,   // 0.8 px/f au départ
+                greenEnemySpeed: 0.8,   
                 baseSpawnRate: 0.02
             };
         }
@@ -144,31 +141,31 @@ class ShootemupGame {
         const scoreAbove150 = this.score - 150;
         const levelUp = Math.floor(scoreAbove150 / 50);
         
-        // Niveau 5 : redEnemySpeed = 20, greenEnemySpeed = 10
-        if (levelUp === 4) {  // Niveau 5 = levelUp 4
+   
+        if (levelUp === 4) {  
             return {
-                greenEnemyProba: 0.5,    // Les rouges commencent à disparaître (50% verts)
-                redEnemySpeed: 20,       // Vitesse rouge = 20 px/f
-                greenEnemySpeed: 10,     // Vitesse verte = 10 px/f
+                greenEnemyProba: 0.5,    
+                redEnemySpeed: 20,       
+                greenEnemySpeed: 10,     
                 baseSpawnRate: 0.02
             };
         }
         
         // À partir du niveau 6, les vitesses ne augmentent plus, mélange 50/50 de rouges et verts
-        if (levelUp >= 5) {  // Niveau 6+ = levelUp >= 5
+        if (levelUp >= 5) {  
             return {
-                greenEnemyProba: 0.5,    // 50% verts, 50% rouges
-                redEnemySpeed: 25,       // Vitesse rouge = 25 px/f
-                greenEnemySpeed: 10,     // Vitesse verte gelée = 10 px/f
-                baseSpawnRate: 0.02 + (levelUp - 5) * 0.005  // +0.5% par niveau au-delà du 6
+                greenEnemyProba: 0.5,    
+                redEnemySpeed: 25,       
+                greenEnemySpeed: 10,     
+                baseSpawnRate: 0.02 + (levelUp - 5) * 0.005  
             };
         }
         
         // Niveaux 1-4 : augmentation progressive des rouges, verts x2 chaque niveau
         return {
-            greenEnemyProba: Math.min(0.1 * (levelUp + 1), 1.0),     // +10% par niveau
-            redEnemySpeed: 2 * Math.pow(2, levelUp),                 // x2 à chaque niveau
-            greenEnemySpeed: 0.8 * Math.pow(2, levelUp),             // x2 à chaque niveau (0.8, 1.6, 3.2, 6.4 px/f)
+            greenEnemyProba: Math.min(0.1 * (levelUp + 1), 1.0),     
+            redEnemySpeed: 2 * Math.pow(2, levelUp),                 
+            greenEnemySpeed: 0.8 * Math.pow(2, levelUp),            
             baseSpawnRate: 0.02
         };
     }
@@ -189,12 +186,12 @@ class ShootemupGame {
             return;
         }
 
-        // Mettre à jour le déplacement CONTINU basé sur le geste actuel
+        // Mettre à jour le déplacement basé sur le geste actuel
         const currentGesture = gestureRecognizer.getCurrentGesture();
         if (currentGesture === 'LEFT') {
-            this.playerX = Math.max(0, this.playerX - this.playerSpeed * 1.5);  // 50% moins rapide
+            this.playerX = Math.max(0, this.playerX - this.playerSpeed * 1.5);  
         } else if (currentGesture === 'RIGHT') {
-            this.playerX = Math.min(this.canvas.width - 50, this.playerX + this.playerSpeed * 1.5);  // 50% moins rapide
+            this.playerX = Math.min(this.canvas.width - 50, this.playerX + this.playerSpeed * 1.5);  
         }
         
         // Tirs continus quand le geste UP est actif
@@ -212,12 +209,12 @@ class ShootemupGame {
         // Mettre à jour et dessiner
         this.updateBullets();
         this.updateEnemies();
-        this.updateMissiles();  // ← Ajouter mise à jour des missiles
+        this.updateMissiles(); 
         this.updateShield();
         this.drawPlayer();
         this.drawBullets();
         this.drawEnemies();
-        this.drawMissiles();  // ← Ajouter affichage des missiles
+        this.drawMissiles();  
         
         // Mettre à jour et dessiner les explosions
         resourceManager.updateAndDrawExplosions(this.ctx);
@@ -241,9 +238,9 @@ class ShootemupGame {
         
         // Ennemis verts tirent des missiles
         for (let enemy of this.enemies) {
-            if (enemy.type === 1) {  // 1 = ennemi vert
+            if (enemy.type === 1) { 
                 const now = Date.now();
-                if (now - enemy.lastFireTime > 1500) {  // Tirer toutes les 1.5 secondes (plus lent)
+                if (now - enemy.lastFireTime > 1500) {  
                     this.enemyFire(enemy);
                     enemy.lastFireTime = now;
                 }
@@ -265,7 +262,7 @@ class ShootemupGame {
             const startBtn = document.getElementById('startBtn');
             if (pauseBtn) pauseBtn.disabled = true;
             if (stopBtn) stopBtn.disabled = true;
-            if (startBtn) startBtn.disabled = false;  // ← Réactiver DÉMARRER pour rejouer
+            if (startBtn) startBtn.disabled = false;  
             
             // Sauvegarder le score
             const bestScore = parseInt(localStorage.getItem('bestScore')) || 0;
@@ -494,7 +491,7 @@ class ShootemupGame {
 
         for (let enemy of this.enemies) {
             if (enemy.type === 0) {
-                // Ennemi rouge (image simple)
+                // Ennemi rouge
                 if (enemyImg) {
                     try {
                         this.ctx.save();
@@ -517,7 +514,7 @@ class ShootemupGame {
                     this.drawEnemyFallback(enemy);
                 }
             } else if (enemy.type === 1) {
-                // Ennemi vert depuis enemyvert.png (pas de rotation)
+                // Ennemi vert
                 const enemyVertImg = resourceManager.getImage('enemyvert');
                 if (enemyVertImg) {
                     try {
@@ -606,14 +603,14 @@ class ShootemupGame {
         const difficulty = this.calculateDifficulty();
         
         // Déterminer le type d'ennemi selon la difficulté
-        const type = Math.random() < difficulty.greenEnemyProba ? 1 : 0;  // 1 = vert, 0 = rouge
+        const type = Math.random() < difficulty.greenEnemyProba ? 1 : 0;  
         
         this.enemies.push({
             x: x,
             y: -size,
             width: size,
             height: size,
-            speed: type === 1 ? difficulty.greenEnemySpeed : difficulty.redEnemySpeed,  // Vitesse selon le type et la difficulté
+            speed: type === 1 ? difficulty.greenEnemySpeed : difficulty.redEnemySpeed,  
             type: type,
             frame: 0,
             frameCounter: 0,
@@ -624,11 +621,11 @@ class ShootemupGame {
     enemyFire(enemy) {
         // Tirer un missile vers le bas avec une légère dispersion horizontale
         const difficulty = this.calculateDifficulty();
-        const missileSpeed = difficulty.greenEnemySpeed * 3.5;  // Adapté à l'accélération de l'ennemi vert
+        const missileSpeed = difficulty.greenEnemySpeed * 3.5;  
         
-        const dispersion = (Math.random() - 0.5) * 30;  // ±15px de dispersion
+        const dispersion = (Math.random() - 0.5) * 30;  
         this.missiles.push({
-            x: enemy.x + 25 + dispersion,  // Dispersé autour du centre
+            x: enemy.x + 25 + dispersion,  
             y: enemy.y + 80,
             width: 10,
             height: 15,
@@ -672,7 +669,7 @@ class ShootemupGame {
             }
         }
 
-        // Bullet vs Missile (can destroy incoming missiles)
+        // Bullet vs Missile
         for (let i = this.bullets.length - 1; i >= 0; i--) {
             for (let j = this.missiles.length - 1; j >= 0; j--) {
                 if (this.isColliding(this.bullets[i], {
@@ -684,7 +681,7 @@ class ShootemupGame {
                     resourceManager.createExplosion(this.missiles[j].x, this.missiles[j].y);
                     this.bullets.splice(i, 1);
                     this.missiles.splice(j, 1);
-                    this.score += 5;  // Bonus pour détruire un missile
+                    this.score += 5; 
                     resourceManager.playSound('explode', 0.2);
                     break;
                 }
@@ -721,7 +718,7 @@ class ShootemupGame {
         for (let i = this.enemies.length - 1; i >= 0; i--) {
             let enemyHitbox;
             if (this.enemies[i].type === 0) {
-                // Ennemi rouge: hitbox centrée
+                // Ennemi rouge
                 enemyHitbox = {
                     x: this.enemies[i].x - 25,
                     y: this.enemies[i].y - 25,
@@ -729,15 +726,15 @@ class ShootemupGame {
                     height: 50
                 };
             } else {
-                // Ennemi vert: hitbox normale
+                // Ennemi vert
                 enemyHitbox = this.enemies[i];
             }
 
             if (this.isColliding(enemyHitbox, {
-                x: this.playerX + 16,  // Hitbox du vaisseau réduite
+                x: this.playerX + 16,  
                 y: this.playerY + 12,
-                width: 18,  // Réduit de 20 à 18
-                height: 12  // Réduit de 15 à 12
+                width: 18,  
+                height: 12  
             })) {
                 const enemy = this.enemies[i];
                 
@@ -766,7 +763,7 @@ class ShootemupGame {
         const livesDisplay = document.getElementById('livesDisplay');
         if (!livesDisplay) return;
 
-        livesDisplay.innerHTML = ''; // Vider
+        livesDisplay.innerHTML = '';
 
         const heartsImg = resourceManager.getImage('hearts');
         const deadHeartsImg = resourceManager.getImage('deadHearts');

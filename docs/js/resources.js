@@ -1,6 +1,6 @@
 /**
  * resources.js
- * Gestion des ressources (images et sons)
+ * Gestion des images et sons
  */
 
 class ResourceManager {
@@ -14,7 +14,7 @@ class ResourceManager {
 
     async loadResources() {
         try {
-            console.log('⏳ Chargement des ressources...');
+            console.log('Chargement des ressources...');
 
             // Charger les images
             this.images.player = await this.loadImage('res/fighter.png');
@@ -24,7 +24,7 @@ class ResourceManager {
             this.images.explosion = await this.loadImage('res/spriteexplosion.png');
             this.images.gameSheet = await this.loadImage('res/gameSheet.png');
             
-            // Charger les images des cœurs
+            // images des cœurs
             try {
                 this.images.hearts = await this.loadImage('res/coeur.png');
                 this.images.deadHearts = await this.loadImage('res/coeurmort.png');
@@ -32,7 +32,7 @@ class ResourceManager {
                 console.warn('Image de cœurs non trouvée');
             }
 
-            // Charger les sons avec loadSound() pour une meilleure gestion
+            // Charger les sons 
             this.sounds.explode = await this.loadSound('res/explode.wav');
             this.sounds.hit = await this.loadSound('res/hit.wav');
             this.sounds.powerup = await this.loadSound('res/powerup.wav');
@@ -49,10 +49,10 @@ class ResourceManager {
             }
 
             this.isLoaded = true;
-            console.log('✓ Ressources chargées avec succès');
+            console.log('Ressources chargées avec succès');
             return true;
         } catch (error) {
-            console.warn('⚠ Erreur lors du chargement des ressources:', error);
+            console.warn('Erreur lors du chargement des ressources:', error);
             console.log('Utilisation des graphiques de fallback');
             this.isLoaded = true;
             return false;
@@ -128,25 +128,20 @@ class ResourceManager {
         return this.images[imageName] || null;
     }
 
-    /**
-     * Créer une animation d'explosion
-     * Basée sur la spritesheet explosion 5x5 (45x45 pixels par sprite)
-     */
+    // animation d'explosion
     createExplosion(x, y) {
         this.explosions.push({
             x: x,
             y: y,
             frame: 0,
-            maxFrames: 25, // 5x5 spritesheet = 25 frames
+            maxFrames: 25, 
             frameCounter: 0,
-            frameDelay: 2, // Délai entre chaque frame
+            frameDelay: 2,
             active: true
         });
     }
 
-    /**
-     * Mettre à jour et dessiner les explosions
-     */
+    //Mettre à jour et dessiner les explosions
     updateAndDrawExplosions(ctx) {
         const explosionImg = this.getImage('explosion');
         if (!explosionImg) return;
@@ -159,7 +154,7 @@ class ResourceManager {
                 continue;
             }
 
-            // Calculer la position dans la spritesheet (5 colonnes, 5 lignes)
+            // Calculer la position dans la spritesheet 
             const spriteSize = 45;
             const col = exp.frame % 5;
             const row = Math.floor(exp.frame / 5);
@@ -170,7 +165,7 @@ class ResourceManager {
                 ctx.save();
                 ctx.globalAlpha = 0.9;
                 
-                // Dessiner l'explosion (agrandir 2x)
+                // Dessiner l'explosion
                 ctx.drawImage(
                     explosionImg,
                     srcX, srcY, spriteSize, spriteSize,

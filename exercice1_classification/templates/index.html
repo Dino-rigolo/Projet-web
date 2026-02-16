@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prédiction Click sur Annonce</title>
+    <style>
+        body { 
+            font-family: Arial; 
+            max-width: 600px; 
+            margin: 50px auto; 
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            color: #333; 
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group { 
+            margin: 15px 0; 
+        }
+        label { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-weight: bold;
+            color: #555;
+        }
+        input, select { 
+            width: 100%; 
+            padding: 10px; 
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0,123,255,0.3);
+        }
+        button { 
+            background: #007bff; 
+            color: white; 
+            padding: 12px 30px; 
+            cursor: pointer; 
+            font-size: 1em;
+            border: none;
+            border-radius: 4px;
+            width: 100%;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result { 
+            margin-top: 20px; 
+            padding: 20px; 
+            border-radius: 5px;
+            font-size: 1.05em;
+        }
+        .will-click { 
+            background: #d4edda; 
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .will-not-click { 
+            background: #f8d7da; 
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .loading {
+            text-align: center;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <!-- python create_mini_dataset.py  -->
+    <!-- python model.py -->
+    <!-- python app_flask.py-->
+        <h1>Prédiction Click sur Annonce</h1>
+        
+        <form id="predictionForm">
+            <div class="form-group">
+                <label for="daily_time">Durée quotidienne sur site (minutes):</label>
+                <input type="number" id="daily_time" name="daily_time" step="0.1" placeholder="ex: 45.5" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="age">Âge:</label>
+                <input type="number" id="age" name="age" placeholder="ex: 35" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="area_income">Revenu moyen région ($):</label>
+                <input type="number" id="area_income" name="area_income" step="0.1" placeholder="ex: 65000" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="daily_internet">Utilisation internet quotidienne (minutes):</label>
+                <input type="number" id="daily_internet" name="daily_internet" step="0.1" placeholder="ex: 200" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="gender">Genre:</label>
+                <select id="gender" name="gender" required>
+                    <option value="">-- Sélectionner --</option>
+                    <option value="Male">Homme</option>
+                    <option value="Female">Femme</option>
+                </select>
+            </div>
+            
+            <button type="submit" id="submitBtn">Prédire</button>
+        </form>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const resultDiv = document.getElementById('result');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Analyse en cours...';
+            resultDiv.innerHTML = '<div class="result loading">Prédiction en cours...</div>';
+            
+            const formData = {
+                daily_time: parseFloat(document.getElementById('daily_time').value),
+                age: parseFloat(document.getElementById('age').value),
+                area_income: parseFloat(document.getElementById('area_income').value),
+                daily_internet: parseFloat(document.getElementById('daily_internet').value),
+                gender: document.getElementById('gender').value
+            };
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.error) {
+                    resultDiv.innerHTML = `<div class="result" style="background: #fff3cd; color: #856404; border: 1px solid #ffeaea;">Erreur: ${result.error}</div>`;
+                } else if (result.will_click) {
+                    resultDiv.className = 'result will-click';
+                    resultDiv.innerHTML = `<strong>CLICK PROBABLE!</strong><br><br>Cet utilisateur cliquera <strong>PROBABLEMENT</strong> sur l'annonce.<br><br>Probabilité: <strong>${result.percentage}%</strong>`;
+                } else {
+                    resultDiv.className = 'result will-not-click';
+                    resultDiv.innerHTML = `<strong>PAS DE CLICK</strong><br><br>Cet utilisateur ne cliquera <strong>PROBABLEMENT PAS</strong> sur l'annonce.<br><br>Probabilité: <strong>${result.percentage}%</strong>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result" style="background: #fff3cd; color: #856404; border: 1px solid #ffeaea;">Erreur de connexion: ${error.message}</div>`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Prédire';
+            }
+        });
+    </script>
+</body>
+</html>

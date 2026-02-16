@@ -1,9 +1,3 @@
-"""
-Script pour entraîner le modèle de réseau neuronal dense
-Prédiction du click sur les annonces (CTR)
-"""
-# faut prend mille classe classe en tant que 0 et mille classe en tant que 1
-# faut avoir environ 80%
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split

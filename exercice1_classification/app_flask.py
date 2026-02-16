@@ -7,18 +7,34 @@ import numpy as np
 import pickle
 import tensorflow as tf
 from tensorflow import keras
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 
 # Charger le modèle
-model = keras.models.load_model('ad_model.h5')
+try:
+    model = keras.models.load_model('ad_model.h5')
+    print("Modèle chargé : ad_model.h5")
+except FileNotFoundError:
+    print("ERREUR: ad_model.h5 non trouvé. Avez-vous exécuté model.py?")
+    model = None
 
 # Charger le scaler et le label encoder
-with open('scaler.pkl', 'rb') as f:
-    scaler = pickle.load(f)
+try:
+    with open('scaler.pkl', 'rb') as f:
+        scaler = pickle.load(f)
+    print("Scaler chargé : scaler.pkl")
+except FileNotFoundError:
+    print("ERREUR: scaler.pkl non trouvé")
+    scaler = None
 
-with open('label_encoder.pkl', 'rb') as f:
-    label_encoder = pickle.load(f)
+try:
+    with open('label_encoder.pkl', 'rb') as f:
+        label_encoder = pickle.load(f)
+    print("Label Encoder chargé : label_encoder.pkl")
+except FileNotFoundError:
+    print("ERREUR: label_encoder.pkl non trouvé")
+    label_encoder = None
 
 @app.route('/')
 def index():
@@ -56,4 +72,8 @@ def predict():
         return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
+    print("\n" + "="*50)
+    print("Démarrage du serveur Flask...")
+    print("Accédez à: http://127.0.0.1:5000")
+    print("="*50 + "\n")
     app.run(debug=True, port=5000)
